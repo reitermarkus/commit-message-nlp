@@ -26,6 +26,12 @@ WHERE LENGTH(message) > 10 AND LENGTH(message) <= 80
 LIMIT 10000
 """
 
+query_size = github_repos.estimate_query_size(QUERY)
+
+print(f'Query size: {query_size} GB')
+
+exit()
+
 query_job = client.query(QUERY)
 
 iterator = query_job.result(timeout=30)
