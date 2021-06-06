@@ -1,30 +1,75 @@
 #!/usr/bin/env python3
 
 import os
+from pathlib import Path
 import csv
 from github import Github
 
-token = os.environ['GITHUB_TOKEN']
+g = Github(os.environ['GITHUB_TOKEN'])
 
-g = Github(token)
-
-languages = ['rust', 'python', 'ruby', 'c', 'haskell', 'c#', 'javascript']
+# Top 10 most wanted languages (excluding SQL), from:
+# https://insights.stackoverflow.com/survey/2020#technology-most-loved-dreaded-and-wanted-languages-loved
+languages = [
+  'python',
+  'javascript',
+  'go',
+  'typescript',
+  'rust',
+  'kotlin',
+  'java',
+  'c++',
+  'c#',
+  'swift',
+]
 
 repository_register = {}
 
 for language in languages:
-  repositories = g.search_repositories(query='stars:>10000 language:' + language).get_page(0)
-  repository_register[language] = repositories[:5]
+  commit_count = 0
+  repo_page = 0
 
-for l in languages:
-  all_commits = []
+  while commit_count < 100000:
+    repositories = g.search_repositories(query=f'language:{language}', sort='stars', order='desc').get_page(repo_page)
 
-  for repository in repository_register[l]:
-    commits = [ (repository.name, repr(c.commit.message)) for c in repository.get_commits().get_page(0)[:20] ]
-    all_commits.extend(commits)
+    if not repositories:
+      break
 
-  with open(f'results/{l}.csv', 'w+', encoding='utf-8') as out:
-    csv_out = csv.writer(out, lineterminator='\n')
-    csv_out.writerow(['repository','message'])
-    for row in all_commits:
-      csv_out.writerow(row)
+    for repo in repositories:
+      print(f'Fetching repo {repo.full_name}')
+      path = Path('results')/'repo'/f'{repo.full_name}.csv'
+
+      if path.exists():
+        print(f'Already contained in cache.')
+        continue
+
+      commit_page = 0
+      all_commits = []
+
+      while len(all_commits) < 10000:
+        commits = repo.get_commits().get_page(commit_page)
+
+        if not commits:
+          break
+
+        for c in commits:
+          commit = c.commit
+
+          merge_commit = len(commit.parents) > 1
+          if merge_commit:
+            continue
+
+          all_commits.append((repo.full_name, repr(c.commit.message)))
+
+        commit_page += 1
+
+      path.parent.mkdir(parents=True, exist_ok=True)
+      with open(path, 'w+', encoding='utf-8') as out:
+        csv_out = csv.writer(out, lineterminator='\n')
+        csv_out.writerow(['repository', 'message'])
+        for row in all_commits:
+          csv_out.writerow(row)
+
+      print(f'Fetched {len(all_commits)} commits.')
+      commit_count += len(all_commits)
+
+    repo_page += 1
