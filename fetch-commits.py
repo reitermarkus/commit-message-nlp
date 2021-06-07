@@ -7,7 +7,7 @@ from time import sleep
 import csv
 from github import Github
 
-g = Github(os.environ['GITHUB_TOKEN'])
+g = Github(os.environ['GITHUB_TOKEN'], per_page=100)
 
 # Top 10 most wanted languages (excluding SQL), from:
 # https://insights.stackoverflow.com/survey/2020#technology-most-loved-dreaded-and-wanted-languages-loved
@@ -36,10 +36,12 @@ def check_rate_limit(resource, show=False):
   remaining = rate_limit.remaining
   limit = rate_limit.limit
 
-  if show:
+  should_sleep = remaining / limit < 0.1
+
+  if show or should_sleep:
     print(f'Rate limit ({resource}): {remaining}/{limit}')
 
-  if remaining / limit >= 0.1:
+  if not should_sleep:
     return
 
   current_time = datetime.utcnow()
@@ -75,6 +77,7 @@ for language in languages:
         continue
 
       all_commits.append((repo.full_name, repr(c.commit.message)))
+      print(f"\r{len(all_commits)}")
       if len(all_commits) >= 10000:
         break
 
