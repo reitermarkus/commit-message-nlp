@@ -69,7 +69,7 @@ for language in languages:
 
     cloned_repo = git.Repo(f'{path}/{repo.name}')
 
-    commits = list(cloned_repo.iter_commits())
+    commits = list(cloned_repo.iter_commits(no_merges=True))
     print(f'Repo {repo.name} has {len(commits)} commits.')
 
     commit_count += len(commits)
