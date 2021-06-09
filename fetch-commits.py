@@ -3,7 +3,7 @@
 import os
 from datetime import datetime
 from pathlib import Path
-from time import sleep
+from time import sleep, perf_counter
 import csv
 from github import Github
 import git
@@ -15,14 +15,14 @@ g = Github(os.environ['GITHUB_TOKEN'], per_page=100)
 languages = [
   'python',
   'javascript',
-  #'go',
-  #'typescript',
-  #'rust',
-  #'kotlin',
-  #'java',
-  #'c++',
-  #'c#',
-  #'swift',
+  'go',
+  'typescript',
+  'rust',
+  'kotlin',
+  'java',
+  'c++',
+  'c#',
+  'swift',
 ]
 
 def check_rate_limit(resource, show=False):
@@ -56,9 +56,13 @@ def check_rate_limit(resource, show=False):
   print(f'Rate limit resets in {reset_seconds} seconds, sleeping until then.')
   sleep(reset_seconds)
 
+start_time = perf_counter()
+
 for language in languages:
   commit_count = 0
+  language_time = perf_counter()
   check_rate_limit(resource='search', show=True)
+
   for repo in g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
     print(f'Fetching repo {repo.full_name}')
     path = Path('results')/'clones'/repo.full_name
@@ -76,11 +80,18 @@ for language in languages:
 
     csv_path = Path('results')/'repo'/f'{repo.name}.csv'
     csv_path.parent.mkdir(parents=True, exist_ok=True)
+
     with open(csv_path, 'w+', encoding='utf-8') as out:
       csv_out = csv.writer(out, lineterminator='\n')
       csv_out.writerow(['repository', 'message'])
       for c in commits:
         csv_out.writerow([ repo.name, repr(c.message) ])
 
-    if commit_count >= 100:
+    if commit_count >= 100000:
+      stop_time = perf_counter()
+      print(f"Gathered {commit_count} commits in {stop_time - language_time:0.4f} seconds")
       break
+
+print("------------------------------------------------------")
+stop_time = perf_counter()
+print(f"Gathered data took {stop_time - start_time:0.4f} seconds")
