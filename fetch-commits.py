@@ -6,6 +6,7 @@ from pathlib import Path
 from time import sleep
 import csv
 from github import Github
+import git
 
 g = Github(os.environ['GITHUB_TOKEN'], per_page=100)
 
@@ -14,14 +15,14 @@ g = Github(os.environ['GITHUB_TOKEN'], per_page=100)
 languages = [
   'python',
   'javascript',
-  'go',
-  'typescript',
-  'rust',
-  'kotlin',
-  'java',
-  'c++',
-  'c#',
-  'swift',
+  #'go',
+  #'typescript',
+  #'rust',
+  #'kotlin',
+  #'java',
+  #'c++',
+  #'c#',
+  #'swift',
 ]
 
 def check_rate_limit(resource, show=False):
@@ -60,39 +61,26 @@ for language in languages:
   check_rate_limit(resource='search', show=True)
   for repo in g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
     print(f'Fetching repo {repo.full_name}')
-    path = Path('results')/'repo'/f'{repo.full_name}.csv'
+    path = Path('results')/'clones'/repo.full_name
 
-    if path.exists():
-      print(f'Already contained in cache.')
-      continue
+    if not path.exists():
+      os.makedirs(path, exist_ok=True)
+      git.Git(path).clone(repo.git_url)
 
-    all_commits = []
+    cloned_repo = git.Repo(f'{path}/{repo.name}')
 
-    check_rate_limit(resource='core', show=True)
-    for c in repo.get_commits():
-      commit = c.commit
+    commits = list(cloned_repo.iter_commits())
+    print(f'Repo {repo.name} has {len(commits)} commits.')
 
-      merge_commit = len(commit.parents) > 1
-      if merge_commit:
-        continue
+    commit_count += len(commits)
 
-      all_commits.append((repo.full_name, repr(c.commit.message)))
-      print(f"\r{len(all_commits)}")
-      if len(all_commits) >= 10000:
-        break
-
-      check_rate_limit(resource='core')
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, 'w+', encoding='utf-8') as out:
+    csv_path = Path('results')/'repo'/f'{repo.name}.csv'
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(csv_path, 'w+', encoding='utf-8') as out:
       csv_out = csv.writer(out, lineterminator='\n')
       csv_out.writerow(['repository', 'message'])
-      for row in all_commits:
-        csv_out.writerow(row)
+      for c in commits:
+        csv_out.writerow([ repo.name, repr(c.message) ])
 
-    print(f'Fetched {len(all_commits)} commits.')
-    commit_count += len(all_commits)
-    if commit_count >= 100000:
+    if commit_count >= 100:
       break
-
-    check_rate_limit(resource='search', show=True)
