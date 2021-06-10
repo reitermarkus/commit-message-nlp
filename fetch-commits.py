@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 from time import sleep, perf_counter
+import itertools
 import csv
 from github import Github
 import git
@@ -75,13 +76,21 @@ for language in languages:
 
     cloned_repo = git.Repo(f'{path}/{repo.name}')
 
-    commits = list(cloned_repo.iter_commits(no_merges=True))
-    print(f'Repo {repo.full_name} has {len(commits)} commits.')
+    commit_iter = cloned_repo.iter_commits(no_merges=True)
+    commits = list(itertools.islice(commit_iter, 10000))
+    print(f'Fetched {len(commits)} commits for repo {repo.full_name}.')
 
-    commit_count += len(commits)
-    all_commits.extend([ [ repo.full_name, repr(c.message) ] for c in commits ])
+    done = False
+    for commit in commits:
+      commit_count += 1
 
-    if commit_count >= 100000:
+      all_commits.append([repo.full_name, commit.author.email, repr(commit.message)])
+
+      if commit_count >= 100000:
+        done = True
+        break
+
+    if done:
       stop_time = perf_counter()
       print(f"Gathered {commit_count} commits in {stop_time - language_time:0.4f} seconds")
       break
@@ -91,7 +100,7 @@ for language in languages:
 
   with open(csv_path, 'w+', encoding='utf-8') as out:
     csv_out = csv.writer(out, lineterminator='\n')
-    csv_out.writerow(['repository', 'message'])
+    csv_out.writerow(['repository', 'author', 'message'])
     for c in all_commits:
       csv_out.writerow(c)
 
