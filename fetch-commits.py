@@ -62,6 +62,7 @@ for language in languages:
   commit_count = 0
   language_time = perf_counter()
   check_rate_limit(resource='search', show=True)
+  all_commits = []
 
   for repo in g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
     print(f'Fetching repo {repo.full_name}')
@@ -77,20 +78,21 @@ for language in languages:
     print(f'Repo {repo.name} has {len(commits)} commits.')
 
     commit_count += len(commits)
-
-    csv_path = Path('results')/'repo'/f'{repo.name}.csv'
-    csv_path.parent.mkdir(parents=True, exist_ok=True)
-
-    with open(csv_path, 'w+', encoding='utf-8') as out:
-      csv_out = csv.writer(out, lineterminator='\n')
-      csv_out.writerow(['repository', 'message'])
-      for c in commits:
-        csv_out.writerow([ repo.name, repr(c.message) ])
+    all_commits.extend([ [ repo.name, repr(c.message) ] for c in commits ])
 
     if commit_count >= 100000:
       stop_time = perf_counter()
       print(f"Gathered {commit_count} commits in {stop_time - language_time:0.4f} seconds")
       break
+
+  csv_path = Path('results')/'csv'/f'{language}.csv'
+  csv_path.parent.mkdir(parents=True, exist_ok=True)
+
+  with open(csv_path, 'w+', encoding='utf-8') as out:
+    csv_out = csv.writer(out, lineterminator='\n')
+    csv_out.writerow(['repository', 'message'])
+    for c in all_commits:
+      csv_out.writerow(c)
 
 print("------------------------------------------------------")
 stop_time = perf_counter()
