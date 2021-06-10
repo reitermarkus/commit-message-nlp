@@ -76,10 +76,10 @@ for language in languages:
     cloned_repo = git.Repo(f'{path}/{repo.name}')
 
     commits = list(cloned_repo.iter_commits(no_merges=True))
-    print(f'Repo {repo.name} has {len(commits)} commits.')
+    print(f'Repo {repo.full_name} has {len(commits)} commits.')
 
     commit_count += len(commits)
-    all_commits.extend([ [ repo.name, repr(c.message) ] for c in commits ])
+    all_commits.extend([ [ repo.full_name, repr(c.message) ] for c in commits ])
 
     if commit_count >= 100000:
       stop_time = perf_counter()
