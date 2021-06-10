@@ -8,6 +8,7 @@ import csv
 from github import Github
 import git
 
+result_cache_dir = Path(os.environ.get('RESULT_CACHE_DIR') or 'results/clones')
 g = Github(os.environ['GITHUB_TOKEN'], per_page=100)
 
 # Top 10 most wanted languages (excluding SQL), from:
@@ -66,10 +67,10 @@ for language in languages:
 
   for repo in g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
     print(f'Fetching repo {repo.full_name}')
-    path = Path('results')/'clones'/repo.full_name
+    path = result_cache_dir/repo.full_name
 
     if not path.exists():
-      os.makedirs(path, exist_ok=True)
+      path.mkdir(parents=True, exist_ok=True)
       git.Git(path).clone(repo.git_url)
 
     cloned_repo = git.Repo(f'{path}/{repo.name}')
