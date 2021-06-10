@@ -8,6 +8,7 @@ import itertools
 import csv
 from github import Github
 import git
+import re
 
 result_cache_dir = Path(os.environ.get('RESULT_CACHE_DIR') or 'results/clones')
 g = Github(os.environ['GITHUB_TOKEN'], per_page=100)
@@ -26,6 +27,21 @@ languages = [
   'c#',
   'swift',
 ]
+
+exceptions = []
+
+with open("exceptions.txt") as ex:
+  exceptions = ex.readlines()
+
+def is_excluded(commit):
+  for exception in exceptions:
+    match = re.match(exception, commit)
+
+    if match:
+      return true
+
+  return false
+
 
 def check_rate_limit(resource, show=False):
   rate_limit = g.get_rate_limit()
@@ -82,6 +98,10 @@ for language in languages:
 
     done = False
     for commit in commits:
+
+      if is_excluded(commit):
+        continue
+
       commit_count += 1
 
       all_commits.append([repo.full_name, commit.author.email, repr(commit.message)])
