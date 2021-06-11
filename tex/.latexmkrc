@@ -6,5 +6,5 @@ push @generated_exts, 'run.xml';
 $bibtex_use = 2;
 
 @default_files = (
-  'report.tex'
+  'paper.tex'
 )

@@ -1,0 +1,33 @@
+\documentclass{article}
+
+\usepackage{lmodern}
+\usepackage[english]{babel}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+
+\usepackage{listings}
+
+\usepackage{graphicx}
+\graphicspath{{assets/}}
+
+\usepackage[
+  style   = numeric,
+  sorting = none,
+]{biblatex}
+\bibliography{report}
+
+\title{Analysing commit messages}
+
+\begin{document}
+  \maketitle
+
+  \section{Introduction}
+  In this paper an effort has been made to analyse commits and gather
+  information on their intended basic operation by looking at the message of
+  the commit. To full-fill on the premise repositories of the top 10 most wanted
+  programming language according to \cite{so-survey} have been investigated. To
+  get a more accurate representation of each language, 100000 commits have been
+  chosen. To enhance diversity, each repository is limited to 10000 commits.
+
+\end{document}
