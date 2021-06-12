@@ -2,6 +2,8 @@ name: TeX
 
 on:
   push:
+    paths:
+      - "tex/**.tex"
     branches: [ main ]
   pull_request:
     branches: [ main ]
