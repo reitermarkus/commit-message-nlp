@@ -1,0 +1,69 @@
+\section{Implementation}
+\label{sec:implementation}
+
+The implementation itself is comprised of three parts:
+
+\begin{itemize}
+  \item scraping
+  \item tagging
+  \item training/testing
+\end{itemize}
+
+\subsection{Scraping}
+
+The scraping process is a curious case since it was problematic to some extend.
+More in that regard can be found in \autoref{sec:challenges}.  The basic idea
+of the scraping process was to fetch repositories and their commits from
+GitHub.  This was done with the help of PyGithub. The code itself for the
+process of repository gathering is rather simple. A basic array with all
+languages was defined as seen in \autoref{lst:languages}, which is then used to
+iterate over and actually search for repositories for the corresponding language
+with the specific GitHub query syntax as seen in \autoref{lst:query}.
+
+\begin{lstlisting}[language=python, label={lst:languages}, caption={Array of all languages for scraping}]
+languages = [
+  'python',
+  'javascript',
+  'go',
+  'typescript',
+  'rust',
+  'kotlin',
+  'java',
+  'c++',
+  'c#',
+  'swift',
+]
+\end{lstlisting}
+
+\begin{lstlisting}[language=python, label={lst:query}, caption={GitHub query syntax}]
+g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
+\end{lstlisting}
+
+This then yields all repositories sorted by \textit{stars} in descending order.
+Stars is a metric on GitHub to show a repository's significance. In the code
+\lstinline{itertools.islice(commit_iter, 10000)} limits a repository to 10000
+commits. a global counter keeps track of all the commits processed and if
+100000 commits is reached a new language with repositories will be fetched.
+This means that at least ten repositories per language are considered.  Because
+the process of scraping is time and space intensive the results are cached. Per
+language one CSV file is created. The file consists of rows with four collumns:
+
+\begin{itemize}
+  \item repository
+  \item language
+  \item author
+  \item message
+\end{itemize}
+
+With this structure all important information is included in the file which is
+essential for further processing. An example of one file can be seen in
+\autoref{lst:csv}.
+
+\begin{lstlisting}[language=xml, label={lst:csv}, caption={Excerpt of \textit{typescript.csv} with commits from the repository \textit{microsoft/vscode}}]
+repository,language,author,message
+microsoft/vscode,typescript,roblourens@gmail.com,"Fix #126087"
+microsoft/vscode,typescript,penn.lv@gmail.com,":notebook: differenciate editor focus and list view focus"
+microsoft/vscode,typescript,me@tylerleonhardt.com,"always hide quickinput on iPad when focus is lost fixes #125284"
+microsoft/vscode,typescript,connor@peet.io,"fix: use inline sourcemaps in watch task"
+microsoft/vscode,typescript,alexdima@microsoft.com,"update `monaco.d.ts`"
+\end{lstlisting}
