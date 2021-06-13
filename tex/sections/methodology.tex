@@ -18,10 +18,17 @@ It has to be noted that not all laguages depicted in
 \autoref{fig:wanted_languages} have been chosen since SQL is not suited for
 analysis and therefore Swift has been chosen instead. Regardless of the
 percentages seen in \autoref{fig:wanted_languages}, 100000 commits of each
-language have been considered for analysis, where 10000 was the maximum per
-repository. The language of choice for the programming part of the analysis
+language have been considered for analysis, where 10000 is the maximum per
+repository. To further diversify the results a limit has been imposed regarding
+the amount of commits per author.
+
+The language of choice for the programming part of the analysis
 is Python. Python is well suited for this project as it has rich support for
 natural language processing related tasks. Additionally the language is great
 for quick prototyping of ideas and with the help of tools like Jupyter
-Notebook, document with graphs and text can be created in no time.
+Notebook, document with graphs and text can be created in no time. Especially
+during the scraping process the library PyGithub was put to good use. PyGithub
+is a Python library that offers typed interactions with the GitHub API v3
+\cite{pygithub}. The results of the fetching process are furthermore cached in
+one CSV file per language.
 
