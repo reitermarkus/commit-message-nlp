@@ -25,12 +25,10 @@ def tokenize(commit_message):
   commit_message = re.sub(r'\(https?://[^)]+\)', '(URL)', commit_message)
   commit_message = re.sub(r'https?://[^\s]+', 'URL', commit_message)
 
-  words = word_tokenize(commit_message)
+  # Normalize email addresses.
+  commit_message = re.sub(r'[\w_.-]+[@][\w_.-]+\.\w+', 'EMAIL_ADDRESS', commit_message)
 
-  # Remove stopwords.
-  words = [word for word in words if not word in stopwords]
-
-  return words
+  return word_tokenize(commit_message)
 
 def test(item):
   i, ((training_index, test_index), source_data, target_data) = item
