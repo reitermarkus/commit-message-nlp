@@ -12,4 +12,3 @@
 
 - Run application with:
 `pipenv run python fetch-commits.py`
-

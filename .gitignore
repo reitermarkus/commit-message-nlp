@@ -1,4 +1,5 @@
 .env
+.ipynb_checkpoints
 
 results/**/*.csv
 results/clones/*
