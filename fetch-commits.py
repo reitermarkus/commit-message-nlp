@@ -103,7 +103,7 @@ for language in languages:
 
       commit_count += 1
 
-      all_commits.append([repo.full_name, language, commit.author.email, repr(commit.message)])
+      all_commits.append([repo.full_name, language, commit.author.email, commit.message])
 
       if commit_count >= 100000:
         done = True
