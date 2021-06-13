@@ -33,15 +33,14 @@ exceptions = []
 with open("exceptions.txt") as ex:
   exceptions = ex.readlines()
 
-def is_excluded(commit):
+def is_excluded(commit_message):
   for exception in exceptions:
-    match = re.match(exception, commit)
+    match = re.match(exception, commit_message)
 
     if match:
-      return true
+      return True
 
-  return false
-
+  return False
 
 def check_rate_limit(resource, show=False):
   rate_limit = g.get_rate_limit()
@@ -99,7 +98,7 @@ for language in languages:
     done = False
     for commit in commits:
 
-      if is_excluded(commit):
+      if is_excluded(commit.message):
         continue
 
       commit_count += 1
