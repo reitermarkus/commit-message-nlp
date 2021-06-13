@@ -103,7 +103,7 @@ for language in languages:
 
       commit_count += 1
 
-      all_commits.append([repo.full_name, commit.author.email, repr(commit.message)])
+      all_commits.append([repo.full_name, language, commit.author.email, repr(commit.message)])
 
       if commit_count >= 100000:
         done = True
@@ -119,7 +119,7 @@ for language in languages:
 
   with open(csv_path, 'w+', encoding='utf-8') as out:
     csv_out = csv.writer(out, lineterminator='\n')
-    csv_out.writerow(['repository', 'author', 'message'])
+    csv_out.writerow(['repository', 'language', 'author', 'message'])
     for c in all_commits:
       csv_out.writerow(c)
 
