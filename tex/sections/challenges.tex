@@ -1,0 +1,21 @@
+\section{Challenges}
+\label{sec:challenges}
+
+Unfortuantelly the project could not be completed without its fair share of
+challenges. Starting off with the scraping process which was not as straight
+forward as it originally might have seemed. Since all repositories are from
+GitHub it was an obvious choice to use the GitHub API are in this case PyGithub
+for everything regarding scraping. After some testing however it was clear that
+this is not a feasable strategy as the GitHub API imposes a strict request
+limit of 5000 requests per hour and since we have to go over each commit in
+order to get the commit message, 5000 requests are reached in no time.
+Ultimately rethinking our strategy was the only option. This did not mean that
+we had to abonden PyGithub completely as we still used it to query the
+repositories. Gathering the commits was only really possible by actually
+cloning the repo and going over the commits with Git itself. Usually this is
+obviously a reasonable way of fetching commits, however with the amount of
+repositories we are working with, this was rather cumbersome, since the disk
+space requirements were considerable. Furthermore each scrape run was also time
+intensive considering the fact that each repository had to be coloned and
+processed.
+
