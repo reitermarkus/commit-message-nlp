@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import shutil
 import os
 from datetime import datetime
 from pathlib import Path
@@ -87,13 +88,18 @@ for language in languages:
 
     if not path.exists():
       path.mkdir(parents=True, exist_ok=True)
-      git.Git(path).clone(repo.git_url)
+      try:
+        git.Git(path).clone(repo.git_url)
+      except KeyboardInterrupt as e:
+        shutil.rmtree(path)
+        raise e
 
+    print(f'Inspecting repo {repo.full_name}')
     cloned_repo = git.Repo(f'{path}/{repo.name}')
 
     commit_iter = cloned_repo.iter_commits(no_merges=True)
     commits = list(itertools.islice(commit_iter, 10000))
-    print(f'Fetched {len(commits)} commits for repo {repo.full_name}.')
+    print(f'Gathered {len(commits)} commits for repo {repo.full_name}.')
 
     done = False
     for commit in commits:
