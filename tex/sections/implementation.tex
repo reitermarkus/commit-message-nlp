@@ -67,3 +67,41 @@ microsoft/vscode,typescript,me@tylerleonhardt.com,"always hide quickinput on iPa
 microsoft/vscode,typescript,connor@peet.io,"fix: use inline sourcemaps in watch task"
 microsoft/vscode,typescript,alexdima@microsoft.com,"update `monaco.d.ts`"
 \end{lstlisting}
+
+\subsection{Tagging}
+
+The next step is to tag commits. We have two categories of tagged commits:
+
+\begin{itemize}
+  \item Conventional commits
+  \item Gitmoji commits
+\end{itemize}
+
+A specific regular expression for each category has to be matched in order to
+tag the commit. The lookup in case of a match is done by search for the
+specific tag in a dictionary. Each category also has a specific dictionary. In
+case of a conventional commit \autoref{lst:tag_map} will be search and in case of
+Gitmoji commits \autoref{lst:gitmoji_map} will be searched.
+
+\begin{lstlisting}[language=python, label={lst:gitmoji_map}, caption={Dictionary for Gitmoji mappings}]
+gitmoji_mappings = {
+  ':memo:':             'docs',        # Documentation
+  ':zap:':              'perf',        # Performance
+  ':fire:':             'remove',      # Removal
+  ':sparkles:':         'feat',        # Feature
+  ':bug:':              'fix',         # Bug Fix
+  ':recycle:':          'refactor',    # Refactor Code
+  ...
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=python, label={lst:tag_map}, caption={Dictionary for conventional tag mappings}]
+tag_mappings = {
+  'bug':           'fix',
+  'testing':       'test',
+  'documentation': 'docs',
+  'feature':       'feat',
+  'gui':           'ui',
+  ...
+}
+\end{lstlisting}
