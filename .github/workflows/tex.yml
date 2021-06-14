@@ -17,7 +17,7 @@ jobs:
         uses: reitermarkus/aspell@master
         with:
           files: tex/**/*.tex
-          args: --mode tex --dont-suggest pipe --per-conf=./tex/aspell.conf -t list
+          args: --mode tex ---personal ./tex/aspell.en_GB.pws -per-conf=./tex/aspell.conf -t list
       - name: Compile Paper
         uses: reitermarkus/latexmk@master
       - name: Prepare Paper for Publishing
