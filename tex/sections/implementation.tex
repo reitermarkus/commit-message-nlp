@@ -107,3 +107,23 @@ tag_mappings = {
   ...
 }
 \end{lstlisting}
+
+\subsection{Training \& Testing}
+
+In order to properly train and test the data-set some filtering has to be done.
+With distinct regular expressions certain message patterns are filtered from
+the commit message. With \lstinline{#\d+} pull request number or issue number
+will be removed, since they start with a \# and end with a number. Version
+numbers can also excerbate tokenization and therefore the simple regular
+expression \lstinline{\b\d+(\.\d+)+\b} takes care of basic version notations
+that are common on GitHub. Email addresses and URL in general also make
+tokenization more difficult. Regular expressions for both of those patterns are
+also necessary. Once all patterns are taken care of, tokenization can commence.
+
+The next step is then to encode the labels. This can be done  with the
+\textit{LabelEncoder} from \textit{sklearn}. The \textit{sklearn} library also
+offers a \textit{CountVectorizer} with whom text documents can be converted
+into token counts. The actual training / testing process is done with a
+ten-fold cross validation which splits the data and yields train and test
+indices with whom the train and test data can be defined. Both data sets are
+then used within the logistic regression to get the final results.
