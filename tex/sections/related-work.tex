@@ -3,10 +3,11 @@
 
 The idea of classifying commits is based on the concept of labelling
 messages with a specific tag. Already labelled commit messages can be
-seen as correctly labelled, as the author is unlike to label his commit
+seen as correctly labelled, as the author is unlikely to label his commit
 incorrectly. Furthermore we have many authors for our selection of
 messages essentially giving us a collaborative labelling approach,
-which has already been well researched \cite{Golder2006}.
+which has already been well researched to result in a representative
+data set \cite{Golder2006}.
 
 While this study only focuses on the lexicographical analysis of the
 commit message, we can also infer a lot of information about the meaning
@@ -21,5 +22,21 @@ or reason behind a commit can reduce the effort of others working
 with the same codebase. Correct labelling can reduce the effort
 of filtering commits relevant to a certain part of the codebase or
 make it easier for developers to find relevant changes by other
-contributors \cite{Mockus2000}.
+contributors \cite{Mockus2000}. An example would be to check if
+a commit introduces a fix for an issue. For some repositories
+it was determined that the amount of changes directly contributes
+to the likelihood of being a fix, \cite{Sliwerski2005}. However,
+this might not be true for all codebases in general.
 
+While gathering information using all metrics of a commit can yield
+good results, only analysing the message itself is less trivial.
+Using many different repositories for commit resources also greatly
+increases diversity, which can ultimately lead to lower accuracy
+of a predictive model \cite{Mockus2000,Santos2020}.
+
+The most important factor in commit classification is the selection
+of labels, as they can greatly influence the prediction results.
+However, applying to many labels might result in a very complex
+classification problem, where commits cannot be properly fitted
+to a single category ultimately resulting in wrong predictions
+\cite{Santos2020}.
