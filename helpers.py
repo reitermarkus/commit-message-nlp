@@ -16,7 +16,7 @@ def tokenize(commit_message):
   commit_message = commit_message.lower()
 
   # Normalize pull request number.
-  commit_message = re.sub(r'#\d+', 'PULL_REQUEST_NUMBER', commit_message)
+  commit_message = re.sub(r'#\d+', 'ISSUE_NUMBER', commit_message)
 
   # Normalize version numbers.
   commit_message = re.sub(r'\b\d+(\.\d+)+\b', 'VERSION_NUMBER', commit_message)
@@ -54,3 +54,4 @@ def test(item):
   print("  F1 macro:", f1_macro)
 
   return [accuracy, f1_micro, f1_macro]
+
