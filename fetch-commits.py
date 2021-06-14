@@ -16,7 +16,7 @@ g = Github(os.environ['GITHUB_TOKEN'], per_page=100)
 
 # Top 10 most wanted languages (excluding SQL), from:
 # https://insights.stackoverflow.com/survey/2020#technology-most-loved-dreaded-and-wanted-languages-loved
-languages = [
+LANGUAGES = [
   'python',
   'javascript',
   'go',
@@ -28,6 +28,10 @@ languages = [
   'c#',
   'swift',
 ]
+
+MAX_COMMITS_PER_LANGUAGE = 100000
+MAX_COMMITS_PER_REPO = 10000
+MAX_COMMITS_PER_AUTHOR = 100
 
 exceptions = []
 
@@ -76,13 +80,17 @@ def check_rate_limit(resource, show=False):
 
 start_time = perf_counter()
 
-for language in languages:
-  commit_count = 0
+authors = {}
+
+for language in LANGUAGES:
+  language_commit_count = 0
   language_time = perf_counter()
   check_rate_limit(resource='search', show=True)
   all_commits = []
 
   for repo in g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
+    repo_commit_count = 0
+
     print(f'Fetching repo {repo.full_name}')
     path = result_cache_dir/repo.full_name
 
@@ -97,27 +105,37 @@ for language in languages:
     print(f'Inspecting repo {repo.full_name}')
     cloned_repo = git.Repo(f'{path}/{repo.name}')
 
-    commit_iter = cloned_repo.iter_commits(no_merges=True)
-    commits = list(itertools.islice(commit_iter, 10000))
-    print(f'Gathered {len(commits)} commits for repo {repo.full_name}.')
+    commits = cloned_repo.iter_commits(no_merges=True)
 
     done = False
     for commit in commits:
-
       if is_excluded(commit.message):
         continue
 
-      commit_count += 1
+      author = commit.author.email
+      if author not in authors:
+        authors[author] = 1
+      else:
+        authors[author] += 1
 
-      all_commits.append([repo.full_name, language, commit.author.email, commit.message])
+      if authors[author] > MAX_COMMITS_PER_AUTHOR:
+        continue
 
-      if commit_count >= 100000:
+      all_commits.append([repo.full_name, language, author, commit.message])
+
+      language_commit_count += 1
+      repo_commit_count += 1
+      if language_commit_count >= MAX_COMMITS_PER_LANGUAGE:
         done = True
         break
+      elif repo_commit_count >= MAX_COMMITS_PER_REPO:
+        break
+
+    print(f'Gathered {repo_commit_count} commits for repo {repo.full_name}. ({language_commit_count}/{MAX_COMMITS_PER_LANGUAGE})')
 
     if done:
       stop_time = perf_counter()
-      print(f"Gathered {commit_count} commits in {stop_time - language_time:0.4f} seconds")
+      print(f'Gathered {MAX_COMMITS_PER_LANGUAGE} commits in {stop_time - language_time:0.4f} seconds.')
       break
 
   csv_path = Path('results')/'csv'/f'{language}.csv'
