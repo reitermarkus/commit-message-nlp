@@ -40,14 +40,15 @@ g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
 \end{lstlisting}
 
 This then yields all repositories sorted by \textit{stars} in descending order.
-Stars is a metric on GitHub to show a repository's significance. Each star represents
-a user on GitHub who has starred this repository. In the code
+Stars is a metric on GitHub to show a repository's significance. Each star
+represents a user on GitHub who has starred this repository. In the code
 \lstinline{itertools.islice(commit_iter, 10000)} limits a repository to 10000
 commits. A global counter keeps track of all the commits processed and if the
-100000th commit is reached, repositories for the next language will be fetched.
-This means that at least ten repositories per language are considered. Because
-the process of scraping is time and space intensive the results are cached. Per
-language one CSV file is created. The file consists of rows with four columns:
+\whitelist{100000th} commit is reached, repositories for the next language will
+be fetched.  This means that at least ten repositories per language are
+considered. Because the process of scraping is time and space intensive the
+results are cached. Per language one CSV file is created. The file consists of
+rows with four columns:
 
 \begin{itemize}
   \item repository
