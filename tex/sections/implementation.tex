@@ -12,9 +12,9 @@ The implementation itself is comprised of three parts:
 \subsection{Scraping}
 
 The scraping process is a curious case since it was problematic to some extend.
-More in that regard can be found in \autoref{sec:challenges}.  The basic idea
+More in that regard can be found in \autoref{sec:challenges}. The basic idea
 of the scraping process was to fetch repositories and their commits from
-GitHub.  This was done with the help of PyGithub. The code itself for the
+GitHub. This was done with the help of PyGithub. The code itself for the
 process of repository gathering is rather simple. A basic array with all
 languages was defined as seen in \autoref{lst:languages}, which is then used to
 iterate over and actually search for repositories for the corresponding language
@@ -40,13 +40,14 @@ g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
 \end{lstlisting}
 
 This then yields all repositories sorted by \textit{stars} in descending order.
-Stars is a metric on GitHub to show a repository's significance. In the code
+Stars is a metric on GitHub to show a repository's significance. Each star represents
+a user on GitHub who has starred this repository. In the code
 \lstinline{itertools.islice(commit_iter, 10000)} limits a repository to 10000
-commits. a global counter keeps track of all the commits processed and if
-100000 commits is reached a new language with repositories will be fetched.
-This means that at least ten repositories per language are considered.  Because
+commits. A global counter keeps track of all the commits processed and if the
+100000th commit is reached, repositories for the next language will be fetched.
+This means that at least ten repositories per language are considered. Because
 the process of scraping is time and space intensive the results are cached. Per
-language one CSV file is created. The file consists of rows with four collumns:
+language one CSV file is created. The file consists of rows with four columns:
 
 \begin{itemize}
   \item repository
@@ -70,7 +71,8 @@ microsoft/vscode,typescript,alexdima@microsoft.com,"update `monaco.d.ts`"
 
 \subsection{Tagging}
 
-The next step is to tag commits. We have two categories of tagged commits:
+The next step is to tag commits. We distinguish between two categories of tagged
+commits:
 
 \begin{itemize}
   \item Conventional commits
@@ -78,10 +80,10 @@ The next step is to tag commits. We have two categories of tagged commits:
 \end{itemize}
 
 A specific regular expression for each category has to be matched in order to
-tag the commit. The lookup in case of a match is done by search for the
+tag the commit. The lookup in case of a match is done by searching for the
 specific tag in a dictionary. Each category also has a specific dictionary. In
-case of a conventional commit \autoref{lst:tag_map} will be search and in case of
-Gitmoji commits \autoref{lst:gitmoji_map} will be searched.
+case of a conventional commit \autoref{lst:tag_map} will be searched,
+Gitmoji commits \autoref{lst:gitmoji_map} otherwise.
 
 \begin{lstlisting}[language=python, label={lst:gitmoji_map}, caption={Dictionary for Gitmoji mappings}]
 gitmoji_mappings = {
