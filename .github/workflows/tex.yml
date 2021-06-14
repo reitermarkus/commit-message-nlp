@@ -16,7 +16,7 @@ jobs:
       - name: Check Spelling
         uses: reitermarkus/aspell@master
         with:
-          files: tex/*.tex
+          files: tex/**.tex
           args: --mode tex --dont-suggest pipe --per-conf=./tex/aspell.conf -t list
       - name: Compile Paper
         uses: reitermarkus/latexmk@master
