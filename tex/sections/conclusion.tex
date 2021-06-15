@@ -1,2 +1,30 @@
 \section{Conclusion}
 \label{sec:conclusion}
+
+In this paper we presented an approach to construct a new dataset containing
+commit messages of various repositories from many popular languages on GitHub.
+In order to complete the project we first had to scrape repositories, followed
+by tagging commits and finally test and train the data using logistic
+regression. While most of the development process was straight forward and as
+expected, some problems arose especially during the scraping part. API limits
+are among the worst offenders in that regard. Fortunately we could prevail by
+circumventing those barriers and find a different approach.
+
+The results are interesting because of the differentiation between per-author
+limit and no per-author limit. Naturally once such a limit is in place the
+amount of high quality commit message is decreasing and best practices are not
+follwed in some cases. The report reflects that notation as the amount of
+tagged commits decreased from about 35000 to about 25000 from a total of
+1000000 commit messages once the limit was in place. The actual tag distributed
+however followed roughly the same trajectory, lead by \enquote{fix} which is
+not really surprising considering the fact that most commits are \enquote{fix commits}.
+Looking at the accuracy, F1 micro and F2 macro numbers the contrast between
+author limits can be seen here as well as all the metrics are lower with the
+limit. Besides that fact, the numbers are not unusual and about what we
+expected initially.
+
+For future work the criteria could be changed. Focusing on repositories with
+tagged commits and in general less small repositories, could yield better
+results.  Furthermore focusing on fewer languages with a different importance
+metric when choosing codebases, could also be interesting.
+
