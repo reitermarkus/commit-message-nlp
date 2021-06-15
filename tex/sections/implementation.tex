@@ -4,14 +4,14 @@
 The implementation itself is comprised of three parts:
 
 \begin{itemize}
-  \item scraping
-  \item tagging
-  \item training/testing
+  \item Scraping
+  \item Tagging
+  \item Training/Testing
 \end{itemize}
 
 \subsection{Scraping}
 
-The scraping process is a curious case since it was problematic to some extend.
+The scraping process is a curious case since it was problematic to some extent.
 More in that regard can be found in \autoref{sec:challenges}. The basic idea
 of the scraping process was to fetch repositories and their commits from
 GitHub. This was done with the help of PyGithub. The code itself for the
@@ -36,18 +36,19 @@ languages = [
 \end{lstlisting}
 
 \begin{lstlisting}[language=python, label={lst:query}, caption={GitHub query syntax}]
-g.search_repositories(query=f'language:{language}', sort='stars', order='desc'):
+g.search_repositories(
+  query=f'language:{language}', sort='stars', order='desc'
+)
 \end{lstlisting}
 
-This then yields all repositories sorted by \textit{stars} in descending order.
-Stars is a metric on GitHub to show a repository's significance. Each star
-represents a user on GitHub who has starred this repository. In the code
-\lstinline{itertools.islice(commit_iter, 10000)} limits a repository to 10000
-commits. A global counter keeps track of all the commits processed and if the
+This then yields all repositories sorted by stars in descending order.
+Stars is a metric on GitHub to show a repository's popularity. Each star
+represents a user on GitHub who has starred this repository. Counters keep track of
+per-author (100), per-repository (10000) and global (1000000) commit limits.
+This means that at least 10 repositories are per per language. When the
 \whitelist{100000th} commit is reached, repositories for the next language will
-be fetched.  This means that at least ten repositories per language are
-considered. Because the process of scraping is time and space intensive the
-results are cached. Per language one CSV file is created. The file consists of
+be fetched. Because the process of scraping is time and space intensive, the
+results are cached. Per language, one CSV file is created. The file consists of
 rows with four columns:
 
 \begin{itemize}
@@ -57,11 +58,11 @@ rows with four columns:
   \item message
 \end{itemize}
 
-With this structure all important information is included in the file which is
-essential for further processing. An example of one file can be seen in
+With this structure, all important information is included in the file which is
+essential for further processing. An example excerpt of one file can be seen in
 \autoref{lst:csv}.
 
-\begin{lstlisting}[language=xml, label={lst:csv}, caption={Excerpt of \textit{typescript.csv} with commits from the repository \textit{microsoft/vscode}}]
+\begin{lstlisting}[language=xml, label={lst:csv}, caption={Excerpt of \texttt{typescript.csv} with commits from the repository \texttt{microsoft/vscode}}]
 repository,language,author,message
 microsoft/vscode,typescript,roblourens@gmail.com,"Fix #126087"
 microsoft/vscode,typescript,penn.lv@gmail.com,":notebook: differenciate editor focus and list view focus"
@@ -76,24 +77,28 @@ The next step is to tag commits. We distinguish between two categories of tagged
 commits:
 
 \begin{itemize}
-  \item Conventional commits
-  \item Gitmoji commits
+  \item Conventional Commits \cite{conventionalcommits}
+  \item Gitmoji \cite{gitmoji}
 \end{itemize}
 
 A specific regular expression for each category has to be matched in order to
 tag the commit. The lookup in case of a match is done by searching for the
-specific tag in a dictionary. Each category also has a specific dictionary. In
-case of a conventional commit \autoref{lst:tag_map} will be searched,
-Gitmoji commits \autoref{lst:gitmoji_map} otherwise.
+specific tag in a dictionary. Gitmoji commits are mapped to follow the same naming
+as Conventional Commits using the lookup table seen in \autoref{lst:gitmoji_map}.
+Commits which follow the Conventional Commits format are mapped using \autoref{lst:tag_map}.
+In the end, all commits which are tagged following the Angular commit message
+guidlines \cite{angular_guidelines} are treated as “known tags” and filtered.
+In addition to adding a tag to a commit, the tag is also removed from the original
+commit message.
 
 \begin{lstlisting}[language=python, label={lst:gitmoji_map}, caption={Dictionary for Gitmoji mappings}]
 gitmoji_mappings = {
-  ':memo:':             'docs',        # Documentation
-  ':zap:':              'perf',        # Performance
-  ':fire:':             'remove',      # Removal
-  ':sparkles:':         'feat',        # Feature
-  ':bug:':              'fix',         # Bug Fix
-  ':recycle:':          'refactor',    # Refactor Code
+  ':memo:':     'docs',     # Documentation
+  ':zap:':      'perf',     # Performance
+  ':fire:':     'remove',   # Removal
+  ':sparkles:': 'feat',     # Feature
+  ':bug:':      'fix',      # Bug Fix
+  ':recycle:':  'refactor', # Refactor Code
   ...
 }
 \end{lstlisting}
@@ -111,20 +116,20 @@ tag_mappings = {
 
 \subsection{Training \& Testing}
 
-In order to properly train and test the data-set some filtering has to be done.
-With distinct regular expressions certain message patterns are filtered from
-the commit message. With \lstinline{#\d+} pull request number or issue number
-will be removed, since they start with a \# and end with a number. Version
+In order to properly train and test the dataset, some filtering has to be done.
+With distinct regular expressions common message patterns are filtered from
+the commit message. With \lstinline{#\d+}, pull request or issue numbers
+are normalised, since they start with a \# and end with a number. Version
 numbers can also exacerbate tokenisation and therefore the simple regular
 expression \lstinline{\b\d+(\.\d+)+\b} takes care of basic version notations
-that are common on GitHub. Email addresses and URL in general also make
-tokenisation more difficult. Regular expressions for both of those patterns are
-also necessary. Once all patterns are taken care of, tokenisation can commence.
+that are common on GitHub. Email addresses and URLs in general also make
+tokenisation more difficult. Therefore, both of those patterns are also
+removed.
 
-The next step is then to encode the labels. This can be done  with the
+The next step is then to encode the tags. This can be done with the
 \textit{LabelEncoder} from \textit{sklearn}. The \textit{sklearn} library also
-offers a \textit{CountVectorizer} with whom text documents can be converted
-into token counts. The actual training / testing process is done with a
-ten-fold cross validation which splits the data and yields train and test
-indices with whom the train and test data can be defined. Both datasets are
+offers a \textit{CountVectorizer} with which text documents can be converted
+into token counts. The actual training/testing process is done using a
+10-fold cross validation which splits the data and yields train and test
+indices with which the train and test data can be defined. Both datasets are
 then used within the logistic regression to get the final results.

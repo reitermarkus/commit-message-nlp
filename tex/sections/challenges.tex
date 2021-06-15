@@ -1,11 +1,11 @@
 \section{Challenges}
 \label{sec:challenges}
 
-Unfortunately the project could not be completed without its fair share of
-challenges. Starting off with the scraping process which was not as straight
-forward as it originally might have seemed. Since all repositories are from
-GitHub it was an obvious choice to use the GitHub API, in this case PyGithub,
-for everything regarding scraping. After some testing however it was clear that
+Unfortunately, the project could not be completed without its fair share of
+challenges. Starting off with the scraping process which was not as
+straightforward as it originally might have seemed. Since all repositories are from
+GitHub it was an obvious choice to use the GitHub API, in this case via PyGithub,
+for everything regarding scraping. After some testing however, it was clear that
 this is not a feasible strategy as the GitHub API imposes a strict request
 limit of 5000 requests per hour. Though we can use a single request to get a
 repository, getting the messages for all commits requires a separate API
@@ -13,25 +13,25 @@ request for each commit. Since we have to go over each commit in
 order to get the commit message, 5000 requests are reached in no time with the
 goal of 100000 commit messages per language.
 
-Ultimately rethinking our strategy was the only option. This did not mean that
+Ultimately, rethinking our strategy was the only option. This did not mean that
 we had to abandon PyGithub completely as we still use it to query the
 repositories. Gathering the commits was only really possible by actually
 cloning the repository and going over the commits with the Git command line utility
-itself. Usually this is obviously a reasonable way of fetching commits, however
+itself. Usually this is a reasonable way of fetching commits, however
 with the amount of repositories we are working with, this was rather cumbersome,
-since the disk space requirements were considerable. Even more so once the
-limits on commits per author was in place. This is the result of a few authors
-having significantly more contributions to a repository than other authors of the
+since the disk space requirements were considerable. Once the limits on commits per
+author was in place, we had to clone 120GB worth of repositories. This is due to a few
+authors having significantly more contributions to a repository than other authors of the
 same repository. However this is to be expected as open source project
 maintainers often work in a smaller group for a long time duration. Furthermore
-each scrape run was also time intensive considering the fact that each
+each scraping run was also time intensive considering the fact that each
 repository had to be cloned and processed.
 
 Another challenge was the selection of repositories itself. In the end we settled
-on sorting them by stars. However this is not necessary a proper metric to
+on sorting them by stars. However this is not necessarily a proper metric to
 determine popularity. Since every user can star an unlimited amount of
 repositories, the possibility of stars contributed by fake accounts cannot be
-excluded. Furthermore users might star a repository for different reasons like,
+excluded. Furthermore, users might star a repository for different reasons like
 appreciation or bookmarking. It would probably be more accurate to use a
 combination of stars, forks and watchers. Our goal however is to collect a set
 of commits, which is representative of the whole set of commits on GitHub.
