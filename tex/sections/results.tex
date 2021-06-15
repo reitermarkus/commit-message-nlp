@@ -60,23 +60,8 @@ The results however are very promising overall. When using the author limit, we 
 very balanced set in terms of commit message diversity while still getting acceptable results with an accuracy
 of ~61.02\% and an F1-score micro of ~61.02\%. The lower F1-score macro of ~44.79\% is more likely to be a
 result of insufficient training data, as half of the labels only have a small number of entries in the data set.
-The exact results are displayed in \autoref{fig:unlimited_commits} and \autoref{fig:limited_commits}.
-
-\begin{table}[H]
-  \def\arraystretch{1.15}%
-  \centering
-  \begin{tabular}{|l|r|}
-    \hline
-    Accuracy       & 65.17\% \\
-    \hline
-    F1-score micro & 65.17\% \\
-    \hline
-    F1-score macro & 53.71\% \\
-    \hline
-  \end{tabular}
-  \caption{Unlimited commit messages per author}
-  \label{fig:unlimited_commits}
-\end{table}
+The exact results, with and without per-author limit, are displayed in \autoref{fig:limited_commits}
+and \autoref{fig:unlimited_commits}, respectively.
 
 \begin{table}[H]
   \def\arraystretch{1.15}%
@@ -94,3 +79,18 @@ The exact results are displayed in \autoref{fig:unlimited_commits} and \autoref{
   \label{fig:limited_commits}
 \end{table}
 
+\begin{table}[H]
+  \def\arraystretch{1.15}%
+  \centering
+  \begin{tabular}{|l|r|}
+    \hline
+    Accuracy       & 65.17\% \\
+    \hline
+    F1-score micro & 65.17\% \\
+    \hline
+    F1-score macro & 53.71\% \\
+    \hline
+  \end{tabular}
+  \caption{Unlimited commit messages per author}
+  \label{fig:unlimited_commits}
+\end{table}
