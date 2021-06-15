@@ -5,9 +5,9 @@ For evaluating our dataset generation, we first collected commits without any li
 a single author. We later added a per-author limit in order to avoid bias being introduced by including a
 vast amount of commits from a single author.
 
-\autoref{fig:total_vs_tagged_with_limit} shows that around 25000 commits (~2.5\%) out of a total of 1000000
+\autoref{fig:total_vs_tagged_with_limit} shows that around 25000 commits ($\approx2.5\%$) out of a total of 1000000
 commits are tagged when limiting the number of commits per author to 100. Without this limit, the number of
-tagged commits slightly increases to about 35000 commits (~3.5\%) out of 1000000, which is shown in
+tagged commits slightly increases to about 35000 commits ($\approx3.5\%$) out of 1000000, which is shown in
 \autoref{fig:total_vs_tagged_without_limit}. Overall, we see that with or without limit, the number of tagged
 commits remains relatively small compared to the total number of commits.
 
@@ -46,7 +46,7 @@ bots, which mainly applies to automatic maintenance tasks, i.e. chores.
 \end{figure}
 
 When comparing the results of the logistic regression, we can clearly notice a difference between the two sets.
-With unlimited messages per author we get about ~4.15\% improvement over the set with author limitations. This
+With unlimited messages per author we get about $\approx4.15\%$ improvement over the set with author limitations. This
 can be related to the bias introduced by authors contributing a very high amount of commit messages. We can
 conclude from the distribution of labels that those authors primarily are maintenance bots.
 
@@ -58,7 +58,7 @@ proportion for each label in the dataset, we get a higher score for the set with
 
 The results however are very promising overall. When using the author limit, we are basically working with a
 very balanced set in terms of commit message diversity while still getting acceptable results with an accuracy
-of ~61.02\% and an F1-score micro of ~61.02\%. The lower F1-score macro of ~44.79\% is more likely to be a
+of $\approx61.02\%$ and an F1-score micro of $\approx61.02\%$. The lower F1-score macro of $\approx44.79\%$ is more likely to be a
 result of insufficient training data, as half of the labels only have a small number of entries in the data set.
 The exact results, with and without per-author limit, are displayed in \autoref{fig:limited_commits}
 and \autoref{fig:unlimited_commits}, respectively.
