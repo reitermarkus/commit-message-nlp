@@ -4,42 +4,42 @@
 With the rise of open source software, more and more big corporations
 incorporate free software in their stack. This also means that the amount of
 meaningful software that is available online on platforms like GitHub
-\cite{github}, is ever increasing. GitHub, as the name already suggest, offers
+\cite{github} is ever increasing. GitHub, as the name already suggest, offers
 the ability to host Git repositories. Git is a distributed version control
 system \cite{git}. One of the most important ideas when working with Git
 is writing expressive commit message for code changes. This helps others
 to understand what the changes are intended to do or why they are needed.
 Using automatic labelling for commits based on their message would therefore
 help users to quickly understand the intended basic operation without reading
-the message of the commit. However developing such approaches require a
-representative dataset of GitHub commits.
+the message of the commit. However, developing such approaches require a
+representative dataset of Git commits.
 
-In this paper an effort has been made to construct a new dataset containing
-commit messages of various repositories from many popular languages. Therefore
+In this paper, an effort has been made to construct a new dataset containing
+commit messages of various repositories from many popular languages. Therefore,
 repositories of the top 10 most wanted programming language according to
-\cite{so-survey} have been investigated on GitHub. To get a more accurate
+a StackOverflow survey \cite{so-survey} have been investigated on GitHub. To get a more accurate
 representation of each language, 100000 commits have been chosen. To further
 enhance diversity, only the last 10000 commits of each selected repository
 were used, while also a general restriction has been enforced to limit the
-amount of commits from a single user in the set. A Python script has been
+amount of commits from a single author in the set. A Python script has been
 developed to automatically construct the dataset.
 
-Afterwards the dataset has been analysed and different metrics are
+Afterwards, the dataset has been analysed and different metrics are
 compared and discussed regarding its contents. To check the
 suitability of the set, a basic commit classification approach has been
-implemented and validated suing 10-Fold cross validation. A subset with
-already labelled commits has been extracted and modified for testing the
-developed approach.
+implemented and validated using 10-fold cross validation. A subset of
+automatically labelled commits was extracted and modified for training and
+testing the developed approach.
 
-The next section discusses some related work about commit messages in
+The \hyperref[sec:related-work]{next section} discusses some related work about commit messages in
 general and their analysis in correlation with metrics to infer the
-correct meaning of the commits changes resulting in the correct application
-of a label \ref{sec:related-work}. Afterwards, the methodology of the
+correct meaning of the commit's changes, resulting in the correct application
+of a label. Afterwards, the methodology of the
 construction of the dataset and the classification approach is presented
-\ref{sec:methodology}. In section \ref{sec:implementation} the
-implementation of the data scraping script, as well as the data analysis
-script is discussed. Some challenges discovered during implementation and
-planning of the methodology are discussed in section \ref{sec:challenges}.
+in \autoref{sec:methodology}. In \autoref{sec:implementation}, the
+implementation of the data scraping script, as well as that of the data analysis
+script, is discussed. Some challenges discovered during implementation and
+planning of the methodology are discussed in \autoref{sec:challenges}.
 This is followed by the results of the analysis and
-the classification approach \ref{sec:results} and the conclusion of the
-work with suggestions for future work \ref{sec:conclusion}.
+the classification approach in \autoref{sec:results} and the conclusion of the
+work with suggestions for future work in \autoref{sec:conclusion}.
